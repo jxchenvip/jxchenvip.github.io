@@ -1,5 +1,7 @@
 ---
 title: git常用命令
+tags: git
+categories: 前端
 ---
 
 
