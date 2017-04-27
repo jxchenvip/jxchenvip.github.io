@@ -12,7 +12,7 @@ Setext样式标题使用等号（对于第一级标题）和破折号（对于�
 <!-- # This is an H1
 ## This is an H2
  -->
-```
+``` markdown
     This is an H1
     =============
     This is an H2
@@ -27,7 +27,7 @@ Atx风格的标题在行的开头使用1-6个散列字符，对应于标题级�
 <!-- # This is an H1
 ## This is an H2
 ###  This is an H3 -->
-```
+``` markdown
     # This is an H1
     ## This is an H2
     ###  This is an H3
@@ -39,7 +39,7 @@ Atx风格的标题在行的开头使用1-6个散列字符，对应于标题级�
 ## This is an H2 ##
 ###  This is an H3 ### -->
 
-```
+``` markdown
     # This is an H1 #
     ## This is an H2 ##
     ###  This is an H3 ###
@@ -56,7 +56,7 @@ Markdown使用电子邮件样式>字符进行块引用。如果您熟悉在电�
 > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
 > id sem consectetuer libero luctus adipiscing.
     
-```
+``` markdown
     > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
     > consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
     > Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
@@ -74,7 +74,7 @@ Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
 > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
 id sem consectetuer libero luctus adipiscing.
 
-```
+``` markdown
     > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
     consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
     Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
@@ -91,7 +91,7 @@ id sem consectetuer libero luctus adipiscing.
 >
 > Back to the first level.
 
-```
+``` markdown
     > This is the first level of quoting.
     >
     > > This is nested blockquote.
@@ -110,7 +110,7 @@ id sem consectetuer libero luctus adipiscing.
 > 
 >    return shell_exec("echo $input | $markdown_script");
 
-```
+``` markdown
     > ## This is a header.
     > 
     > 1.   This is the first list item.
@@ -133,7 +133,7 @@ Markdown支持有序（编号）和无序（项目符号）列表。
 *   Green
 *   Blue
 
-```
+``` markdown
         *   Red
         *   Green
         *   Blue
@@ -147,13 +147,13 @@ Markdown支持有序（编号）和无序（项目符号）列表。
         -   Blue
 ```
 有序列表使用数字后跟句点：
-```
+``` markdown
     1.  Bird
     2.  McHale
     3.  Parish
 ```
 请务必注意，用于标记列表的实际数字对Markdown生成的HTML输出没有影响。从上面的列表生成的HTML Markdown是：
-```
+``` html
     <ol>
         <li>Bird</li>
         <li>McHale</li>
@@ -161,13 +161,13 @@ Markdown支持有序（编号）和无序（项目符号）列表。
     </ol>
 ```
 如果你改为写在Markdown中的列表，像这样：
-```
+``` markdown
     1.  Bird
     1.  McHale
     1.  Parish
 ```
 甚至：
-```
+``` markdown
     3. Bird
     1. McHale
     8. Parish
@@ -179,7 +179,7 @@ Markdown支持有序（编号）和无序（项目符号）列表。
 列表标记通常从左边距开始，但可以缩进最多三个空格。列表标记后必须跟有一个或多个空格或制表符。
 
 要使列表看起来不错，您可以使用悬挂缩排包装项目：
-```
+``` markdown
     *   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
         Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
         viverra nec, fringilla in, laoreet vitae, risus.
@@ -187,7 +187,7 @@ Markdown支持有序（编号）和无序（项目符号）列表。
         Suspendisse id sem consectetuer libero luctus adipiscing.
 ```
 但如果你想懒惰，你不必：
-```
+``` markdown
     *   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
     Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
     viverra nec, fringilla in, laoreet vitae, risus.
@@ -195,25 +195,25 @@ Markdown支持有序（编号）和无序（项目符号）列表。
     Suspendisse id sem consectetuer libero luctus adipiscing.
 ```
 如果列表项由空行分隔，Markdown将<p>在HTML输出中的标签中包装项。例如，此输入：
-```
+``` markdown
     *   Bird
     *   Magic
 ```
 将变成：
-```
+``` html
     <ul>
         <li>Bird</li>
         <li>Magic</li>
     </ul>
 ```
 但是这个：
-```
+``` markdown
     *   Bird
 
     *   Magic
 ```
 将变成：
-```
+``` html
     <ul>
         <li><p>Bird</p></li>
         <li><p>Magic</p></li>
@@ -230,7 +230,7 @@ Markdown支持有序（编号）和无序（项目符号）列表。
     sit amet velit.
 
 2.  Suspendisse id sem consectetuer libero luctus adipiscing.
-```
+``` markdown
 
     1.  This is a list item with two paragraphs. Lorem ipsum dolor
         sit amet, consectetuer adipiscing elit. Aliquam hendrerit
@@ -252,7 +252,7 @@ sit amet, consectetuer adipiscing elit.
 
 *   Another item in the same list.
 
-```
+``` markdown
     *   This is a list item with two paragraphs.
 
         This is the second paragraph in the list item. You're
@@ -268,7 +268,7 @@ sit amet, consectetuer adipiscing elit.
     > This is a blockquote
     > inside a list item.
 
-```
+``` markdown
     *   A list item with a blockquote:
 
         > This is a blockquote
@@ -281,7 +281,7 @@ sit amet, consectetuer adipiscing elit.
         <code goes here>
 
 
-```
+``` markdown
     *   A list item with a code block:
 
             <code goes here>;
@@ -293,7 +293,7 @@ sit amet, consectetuer adipiscing elit.
     1986. What a great season.
 ```
 换句话说，一个数字周期空间序列在一行的开始。为了避免这种情况，可以反斜杠转义期间：
-```
+``` markdown
     1986\. What a great season.
 ```
 
@@ -304,18 +304,18 @@ sit amet, consectetuer adipiscing elit.
 要在Markdown中生成代码块，只需将该块的每一行缩进至少4个空格或1个制表符。例如，给定此输入
 
 This is a normal paragraph:
-```
+``` markdown
     This is a code block.
 ```
 Markdown将生成：
-```
+``` html
     <p>This is a normal paragraph:</p>
 
     <pre><code>This is a code block.
     </code></pre>
 ```
 从代码块的每一行中删除一个缩进级别（4个空格或1个制表符）。例如，这：
-```
+``` markdown
     Here is an example of AppleScript:
 
         tell application "Foo"
@@ -324,7 +324,7 @@ Markdown将生成：
 ```
 
 将变成：
-```
+``` html
     <p>Here is an example of AppleScript:</p>
 
     <pre><code>tell application "Foo"
@@ -337,14 +337,14 @@ Markdown将生成：
 代码块继续，直到它到达没有缩进的行（或文章的结尾）。
 
 在代码块中，ampersands（&）和尖括号（<和>）将自动转换为HTML实体。这使得很容易包含使用Markdown的示例HTML源代码 - 只需粘贴和缩进它，Markdown将处理和号和尖括号的编码的麻烦。例如，这：
-```
+``` html
     <div class="footer">
         &copy; 2004 Foo Corporation
     </div>
 ```
 
 将变成：
-```
+``` html
     <pre><code>&lt;div class="footer"&gt;
         &amp;copy; 2004 Foo Corporation
     &lt;/div&gt;
@@ -366,7 +366,7 @@ Markdown将生成：
 - - -
 
 ---------------------------------------
-```
+``` markdown
     * * *
 
     ***
@@ -385,13 +385,13 @@ Markdown支持两种类型的链接：内联和引用。
 在两种样式中，链接文本由[方括号]分隔。
 
 要创建内联链接，请在链接文本的结束方括号后立即使用一组常规括号。在括号内，将您希望链接指向的URL，以及链接的可选 标题（用引号括起来）。例如：
-```
+``` markdown
     This is [an example](http://example.com/ "Title") inline link.
 
     [This link](http://example.net/) has no title attribute.
 ```
 会产生：
-```
+``` html
     <p>This is <a href="http://example.com/" title="Title">
     an example</a> inline link.</p>
 
@@ -400,7 +400,7 @@ Markdown支持两种类型的链接：内联和引用。
 ```
 
 如果您指的是同一台服务器上的本地资源，则可以使用相对路径：
-```
+``` markdown
     See my [About](/about/) page for details.   
 ```
 参考样式链接使用第二组方括号，在其中放置您选择的标签以标识链接：
@@ -408,11 +408,11 @@ Markdown支持两种类型的链接：内联和引用。
     This is [an example][id] reference-style link.
 ```
 您可以选择使用空格分隔括号集：
-```
+``` markdown
     This is [an example] [id] reference-style link.
 ```
 然后，在文档中的任何位置，您都可以这样定义您的链接标签：
-```
+``` markdown
     [id]: http://example.com/  "Optional Title Here"
 ```
 * 包含链接标识符的方括号（可选地使用最多三个空格从左边距缩进）;
@@ -422,7 +422,7 @@ Markdown支持两种类型的链接：内联和引用。
 * 可选地后跟链接的标题属性，用双引号或单引号括起来，或括在括号中。
 
 以下三个链接定义是等效的：
-```
+``` markdown
     [foo]: http://example.com/  "Optional Title Here"
     [foo]: http://example.com/  'Optional Title Here'
     [foo]: http://example.com/  (Optional Title Here)
@@ -430,43 +430,43 @@ Markdown支持两种类型的链接：内联和引用。
 注意： Markdown.pl 1.0.1中有一个已知的错误，它阻止单引号用于定界链接标题。
 
 链接URL可以可选地由尖括号包围：
-```
+``` markdown
     [id]: <http://example.com/>  "Optional Title Here"
 ```
 您可以将title属性放在下一行，并使用额外的空格或制表符进行填充，这对于较长的网址往往看起来更好：
-```
+``` markdown
     [id]: http://example.com/longish/path/to/resource/here
     "Optional Title Here"
 ```
 链接定义仅用于在Markdown处理期间创建链接，并在HTML输出中从您的文档中删除。
 
 链接定义名称可以由字母，数字，空格和标点符号组成 - 但它们不区分大小写。例如这两个链接：
-```
+``` markdown
     [link text][a]
     [link text][A]
 ```
 是等价的。
 
 该隐含链接名称的快捷方式，您可以省略的链接，在这种情况下，链接文本本身被用作名称的名称。只需使用一组空的方括号 - 例如，将单词“Google”链接到google.com网站，您可以简单地写：
-```
+``` markdown
     [Google][]
 ```
 然后定义链接：
-```
+``` markdown
     [Google]: http://google.com/
 ```
 因为链接名称可能包含空格，所以此快捷方式甚至适用于链接文本中的多个单词：
-```
+``` markdown
     Visit [Daring Fireball][] for more information.
 ```
 然后定义链接：
-```
+``` markdown
     [Daring Fireball]: http://daringfireball.net/
 ```
 链接定义可以放置在Markdown文档中的任何位置。我倾向于把它们放在使用它们的每个段落之后，但如果你想要的话，你可以把它们都放在文档的末尾，就像脚注一样。
 
 以下是实际引用链接的示例：
-```
+``` markdown
     I get 10 times more traffic from [Google] [1] than from
     [Yahoo] [2] or [MSN] [3].
 
@@ -475,7 +475,7 @@ Markdown支持两种类型的链接：内联和引用。
      [3]: http://search.msn.com/    "MSN Search"
 ```
 使用隐式链接名称快捷方式，您可以改为写：
-```
+``` markdown
     I get 10 times more traffic from [Google][] than from
     [Yahoo][] or [MSN][].
 
@@ -484,14 +484,14 @@ Markdown支持两种类型的链接：内联和引用。
       [msn]:    http://search.msn.com/    "MSN Search"
 ```
 上述两个示例都将生成以下HTML输出：
-```
+``` html
     <p>I get 10 times more traffic from <a href="http://google.com/"
     title="Google">Google</a> than from
     <a href="http://search.yahoo.com/" title="Yahoo Search">Yahoo</a>
     or <a href="http://search.msn.com/" title="MSN Search">MSN</a>.</p>
 ```
 为了比较，这里是使用Markdown的内联链接风格编写的同一段：
-```
+``` markdown
     I get 10 times more traffic from [Google](http://google.com/ "Google")
     than from [Yahoo](http://search.yahoo.com/ "Yahoo Search") or
     [MSN](http://search.msn.com/ "MSN Search").
@@ -509,7 +509,7 @@ _single underscores_
 **double asterisks**
 
 __double underscores__
-```
+``` markdown
     *single asterisks*
 
     _single underscores_
@@ -519,7 +519,7 @@ __double underscores__
     __double underscores__
 ```
 将产生：
-```
+``` html
     <em>single asterisks</em>
 
     <em>single underscores</em>
@@ -533,53 +533,53 @@ __double underscores__
 强调可以在单词的中间使用：
 
 un*frigging*believable
-```
+``` markdown
     un*frigging*believable
 ```
 但是如果你围绕一个*或者_包含空格，它将被视为一个字母星号或下划线。
 
 要在将用作强调分隔符的位置生成文字星号或下划线，可以反斜杠转义：
-```
+``` markdown
     \*this text is surrounded by literal asterisks\*
 ```
 ###  代码
 
 要指示一段代码，用反引号引号（`）括起来。与预格式化代码块不同，代码跨度表示正常段落内的代码。例如：
-```
+``` markdown
     Use the `printf()` function.
 ```
 将产生：
-```
+``` html
     <p>Use the <code>printf()</code> function.</p>
 ```
 要在代码范围内包含文字反引号字符，可以使用多个反引号作为开始和结束分隔符：
-```
+``` markdown
     ``There is a literal backtick (`) here.``
 ```
 这将产生：
-```
+``` html
     <p><code>There is a literal backtick (`) here.</code></p>
 ```
 围绕代码跨度的反引号分隔符可以包括空格 - 一个在开头之后，一个在结束之前。这允许您在代码跨度的开始或结束处放置文字反引号字符：
-```
+``` markdown
     A single backtick in a code span: `` ` ``
 
     A backtick-delimited string in a code span: `` `foo` ``
 ```
 将产生：
-```
+``` html
     <p>A single backtick in a code span: <code>`</code></p>
 
     <p>A backtick-delimited string in a code span: <code>`foo`</code></p>
 ```
 使用代码跨度，＆号和尖括号自动编码为HTML实体，这使得容易包括示例HTML标记。Markdown会变成这样：
-```
+``` markdown
     Please don't use any `<blink>` tags.
     `&#8212;` is the decimal-encoded equivalent of `&mdash;`.
     <p>Please don't use any <code>&lt;blink&gt;</code> tags.</p>
 ```
 生产：
-```
+``` html
     <p><code>&amp;#8212;</code> is the decimal-encoded
     equivalent of <code>&amp;mdash;</code>.</p>
 ```
@@ -590,7 +590,7 @@ un*frigging*believable
 Markdown使用的图像语法类似于链接的语法，允许两种样式：内联和引用。
 
 内联图像语法如下所示：
-```
+``` markdown
     ![Alt text](/path/to/img.jpg)
     ![Alt text](/path/to/img.jpg "Optional title")
 ```
@@ -599,11 +599,11 @@ Markdown使用的图像语法类似于链接的语法，允许两种样式：内
 * 后跟一组括号，包含图像的URL或路径，以及用title双引号或单引号括起来的可选属性。
 
 参考样式图像语法如下所示：
-```
+``` markdown
     ![Alt text][id]
 ```
 其中“id”是定义的图像引用的名称。图像引用使用与链接引用相同的语法来定义：
-```
+``` markdown
     [id]: url/to/image  "Optional title attribute"
 ```
 在撰写本文时，Markdown没有用于指定图像尺寸的语法; 如果这对你很重要，你可以简单地使用常规的HTML <img>标签。
@@ -611,19 +611,19 @@ Markdown使用的图像语法类似于链接的语法，允许两种样式：内
 ###  自动链接
 
 Markdown支持用于为URL和电子邮件地址创建“自动”链接的快捷方式样式：只需用尖括号括住URL或电子邮件地址。这意味着，如果您想要显示网址或电子邮件地址的实际文字，并将其设为可点击的链接，则可以执行以下操作：
-```
+``` markdown
     <http://example.com/>
 ```
 Markdown会把这个变成：
-```
+``` html
     <a href="http://example.com/">http://example.com/</a>
 ```
 电子邮件地址的自动链接的工作方式类似，除了Markdown还将执行一点随机十进制和十六进制实体编码，以帮助遮掩从地址收获垃圾邮件的地址。例如，Markdown将会这样：
-```
+``` markdown
     <address@example.com>
 ```
 成这样的东西：
-```
+``` html
     <a href="&#x6D;&#x61;i&#x6C;&#x74;&#x6F;:&#x61;&#x64;&#x64;&#x72;&#x65;
     &#115;&#115;&#64;&#101;&#120;&#x61;&#109;&#x70;&#x6C;e&#x2E;&#99;&#111;
     &#109;">&#x61;&#x64;&#x64;&#x72;&#x65;&#115;&#115;&#64;&#101;&#120;&#x61;
