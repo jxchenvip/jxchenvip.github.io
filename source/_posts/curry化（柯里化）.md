@@ -1,7 +1,8 @@
 ---
 title: curry化（柯里化）
-tags: 前端
+tags: [前端,javascript]
 categories: 前端
+date: 2017-04-24 10:38:47
 ---
 
 ## Curry化
