@@ -2,7 +2,7 @@
 title: javascript设计模式（观察者模式）
 tags: [前端,javascript,javascript设计模式]
 categories: 前端
-date: 2017-05-02 12:10:47
+date: 2017-05-03 12:10:47
 ---
 
 ## 观察者模式

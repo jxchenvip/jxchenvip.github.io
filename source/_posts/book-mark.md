@@ -31,6 +31,7 @@ date: 2017-04-21 12:35:25
 * [js doc](http://yuri4ever.github.io/jsdoc/#@classdesc "js doc")
 * [JavaScript半知半解](http://www.kancloud.cn/dennis/tgjavascript/241800 "JavaScript半知半解")
 * [anime js](http://anime-js.com/ "anime js")
+* [深入理解JavaScript系列](http://www.cnblogs.com/TomXu/archive/2011/12/15/2288411.html#3676084)
 
 
 ### 打包工具

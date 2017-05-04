@@ -2,7 +2,7 @@
 title: javascript设计模式（中介者模式）
 tags: [前端,javascript,javascript设计模式]
 categories: 前端
-date: 2017-05-01 15:10:47
+date: 2017-05-02 15:10:47
 ---
 
 ## 中介者模式
