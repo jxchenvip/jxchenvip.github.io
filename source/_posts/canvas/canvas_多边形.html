@@ -1,0 +1,219 @@
+---
+title: canvas多边形 
+categories: 前端
+tags: [javascript, html5, canvas]
+date: 2017/5/8 15:27:21 
+---
+
+<p>我们尝试画一个多边形，需要了解一下什么是多边形”：</p>
+<blockquote>
+<p>“数学用语，由三条或三条以上（在《几何原本》中定义为四条以上）的线段首尾顺次连接所组成的平面图形叫做多边形。按照不同的标准，多边形可以分为正多边形和非正多边形、凸多边形及凹多边形等。”</p>
+</blockquote>
+<p>正多边形是我们今天讨论的主题：</p>
+
+<h2>中心点</h2>
+<p>正多边形都有它的中心点，我们首先要确定中心点，以六边形为例：</p>
+
+<!-- more -->
+
+<h3>创建canvas</h3>
+<div id="polygon_dot"></div>
+
+```js
+	var SIDE = 6;
+	var canvas =  document.createElement('canvas');
+	var context = canvas.getContext('2d');
+```
+<h3>canvas中心点</h3>
+
+```js
+	var CX = canvas.width / 2;
+	var CY = canvas.height / 2;
+```
+
+
+<h2>半径</h2>
+<div id="polygon_radius"></div>
+
+```js
+	var RADIUS = canvas.width / 2;
+```
+
+
+
+<h2>各顶点的坐标</h2>
+<div id="polygon_points"></div>
+
+
+```js
+	function d2a(n) {
+		return n * Math.PI / 180;
+	}
+
+	var angle = 360 / SIDE,
+		points = [];
+	for(var i = 0; i <= SIDE; i++) {
+		var point = {};
+		point.x = Math.cos(d2a(angle * i)) * RADIUS + WIDTH / 2;
+		point.y = Math.sin(d2a(angle * i)) * RADIUS + HEIGHT / 2;
+		points.push(point);
+	}
+
+```
+
+
+<h2>链接各顶点坐标</h2>
+<div id="polygon_sides"></div>
+
+```js
+	var sides = side_points();
+	context.beginPath();
+	context.moveTo(sides[0].x, sides[0].y);
+	sides.forEach(function(item) {
+		context.lineTo(item.x, item.y);
+		context.stroke();
+	});
+	context.closePath();
+```
+
+<p>到此我们的六边形就已经完成了，下面我们来修改一下参数来改变我们的多边形</p>
+
+
+<p><label for="side">边数</label></p>
+<p><input type="range" min="3" max="9" step="1" name="side" id="range_side" value="6"></p>
+
+<div id="polygon_range_side"></div>
+
+<script>
+
+	(function() {
+		
+		// 不支持canvas
+		if(!document.createElement('canvas').getContext) return false;
+
+		/**
+		 * [createCanvas 创建canvas元素]
+		 * @return {[Object]}
+		 */
+		function createCanvas() {
+			var canvas =  document.createElement('canvas');
+			var context = canvas.getContext('2d');
+			canvas.width = 100;
+			canvas.height = 100;
+			return context;
+		}
+
+		function $(id) {
+			return document.getElementById(id);
+		}
+
+		function clear(context) {
+			context.clearRect(0, 0, WIDTH, HEIGHT);
+		}
+
+		function createCanvasImage(ele, context) {
+			ele.innerHTML = "<img src="+context.canvas.toDataURL()+" alt='' />";
+		}
+
+		function createDots(context) {
+			context.beginPath();
+			context.arc(WIDTH/2, HEIGHT/2, DOTS_RADIUS, 0, PI2);
+			context.fill();
+			context.closePath();
+		}
+
+		function createRadius(context) {
+			context.beginPath();
+			context.moveTo(WIDTH/2, HEIGHT/2);
+			context.lineTo(WIDTH/2, 0);
+			context.stroke();
+			context.closePath();
+		}
+
+		function d2a(n) {
+			return n * Math.PI / 180;
+		}
+
+		function side_points() {
+			var angle = 360 / SIDE,
+				points = [];
+			for(var i = 0; i <= SIDE; i++) {
+				var point = {};
+				point.x = Math.cos(d2a(angle * i)) * RADIUS + WIDTH / 2;
+				point.y = Math.sin(d2a(angle * i)) * RADIUS + HEIGHT / 2;
+				points.push(point);
+			}
+			return points;
+		}
+
+		function createSide(context) {
+			var sides = side_points();
+			sides.forEach(function(item) {
+				context.beginPath();
+				context.arc(item.x, item.y, 1, 0, PI2);
+				context.fill();
+				context.closePath();
+			});
+
+		}
+
+
+		function lineToSide(context) {
+			var sides = side_points();
+			context.beginPath();
+			context.moveTo(sides[0].x, sides[0].y);
+			sides.forEach(function(item) {
+				context.lineTo(item.x, item.y);
+				context.stroke();
+			});
+			context.closePath();
+		}
+
+		function onchange() {
+			SIDE = this.value || 6;
+			clear(context);
+			lineToSide(context);
+			createCanvasImage(polygon_range_side, context);
+			// document.body.style.background = "url("+context.canvas.toDataURL()+")";
+		}
+
+		// init
+		var polygon_dot = $('polygon_dot'),
+			polygon_radius = $('polygon_radius'),
+			polygon_points = $('polygon_points'),
+			polygon_sides = $('polygon_sides'),
+			range_side = $('range_side'),
+			polygon_range_side = $('polygon_range_side'),
+			PI2 = Math.PI * 2,
+			DOTS_RADIUS = 3,
+			LINE_WIDTH = 1,
+			SIDE = range_side.value,
+			context = createCanvas(),
+			WIDTH = context.canvas.width,
+			HEIGHT = context.canvas.height,
+			RADIUS = WIDTH / 2 - LINE_WIDTH;
+			
+
+			createDots(context);
+			createCanvasImage(polygon_dot, context);
+			clear(context);
+
+			createRadius(context);
+			createCanvasImage(polygon_radius, context);
+			clear(context);
+
+			createSide(context);
+			createCanvasImage(polygon_points, context);
+			clear(context);
+
+
+			lineToSide(context);
+			createCanvasImage(polygon_sides, context);
+
+			
+			onchange(context);
+			range_side.onchange = onchange;
+
+	})();
+
+</script>
