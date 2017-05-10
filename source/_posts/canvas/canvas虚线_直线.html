@@ -1,0 +1,340 @@
+---
+title: canvas虚线、直线 
+categories: 前端
+tags: [javascript, html5, canvas]
+date: 2017/5/10 9:39:15  
+---
+
+
+<h2>moveTo(x, y)</h2>
+<p>移动到某个点; x: 路径的目标位置的 x 坐标, y: 路径的目标位置的 y 坐标</p>
+
+<h2>lineTo(x, y)</h2>
+<p>开始一条路径，移动到位置 (x, y)</p>
+
+
+
+```js
+context.beginPath();
+context.moveTo(0, 0);
+context.lineTo(100, 100);
+context.stroke();
+context.closePath();
+```
+<!-- more -->
+
+<div id="line_move_to"></div>
+
+<p>画实线是相当简单的一件事，下面重点说一下虚线是怎么画的</p>
+
+<h2>setLineDash</h2>
+
+<p>开始写这篇文章的时候canvas已经提供了虚线的绘制方法</p>
+
+```js
+	CanvasRenderingContext2D.setLineDash()
+```
+
+<p>此方法接收一个数组，数组个数不限，生成的虚线根据数组的元素，一实，一虚重重绘制。</p>
+<p>仔细看下面例子的不同之处你会有所收获</p>
+
+
+
+```js
+context.beginPath();
+context.setLineDash([5]); // 重点
+context.moveTo(0, 0);
+context.lineTo(100, 100);
+context.stroke();
+context.closePath();
+```
+
+<h3>一个参数</h3>
+```js
+context.setLineDash([5]);
+// 相当于
+context.setLineDash([5, 5]);
+```
+<div id="line_dash_1"></div>
+
+<h3>两个参数</h3>
+```js
+context.setLineDash([5, 10]);
+```
+<div id="line_dash_2"></div>
+
+<h3>三个参数</h3>
+```js
+context.setLineDash([5, 10, 15]);
+// 相当于
+context.setLineDash([5, 10, 15, 5, 10, 15]);
+```
+<div id="line_dash_3"></div>
+
+<h3>四个参数</h3>
+```js
+context.setLineDash([5, 10, 15, 20]);
+```
+<div id="line_dash_4"></div>
+
+
+<h2>getLineDash</h2>
+
+```js
+context.setLineDash([5, 10]);
+context.getLineDash() // [5, 10];
+```
+<h2>lineDashOffset </h2>
+
+```js
+context.lineDashOffset++;
+```
+
+<div id="line_dash_5"></div>
+
+<h2>自定义虚线函数</h2>
+
+```js
+	
+    /**
+     * [calcDistance 两点之间的距离]
+     * @param  {[Object]} p1 [坐标点1]
+     * @param  {[Object]} p2 [坐标点2]
+     */
+    function calcDistance(p1, p2) {
+        var a = (p1.x - p2.x),
+        	b = (p1.y - p2.y);
+        return Math.sqrt(a * a + b * b);
+    }
+
+    /**
+     * [drawDashedLine 画虚线]
+     * @param  {[Object]} ctx          [context]
+     * @param  {[Object]} p1           [起点]
+     * @param  {[Object]} p2           [终点]
+     * @param  {[Number]} dashedLength [虚线长度]
+     */
+    function drawDashedLine(ctx, p1, p2, dashedLength) {
+        var s = calcDistance(p1, p2);
+        	f = Math.round(s / dashedLength) || 1,
+        	a = (p1.x - p2.x) / f,
+        	b = (p1.y - p2.y) / f;
+        ctx.beginPath();
+        for (var i = 0; i < f; i++) {
+        	ctx[i % 2 == 0 ? 'moveTo' : 'lineTo'](p1.x - i * a, p1.y - i * b);
+        }
+        ctx.stroke();
+        ctx.closePath();
+    }
+```
+
+<div id="define_dash"></div>
+
+<h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/dash_line/index.html">#下载源码</a></h2>
+
+<script>
+
+	(function() {
+		
+		// 不支持canvas
+		if(!document.createElement('canvas').getContext) return false;
+
+		/**
+		 * [createCanvas 创建canvas元素]
+		 * @return {[object]}
+		 */
+		function createCanvas() {
+			var canvas =  document.createElement('canvas');
+			var context = canvas.getContext('2d');
+			canvas.width = WIDTH;
+			canvas.height = HEIGHT;
+			return context;
+		}
+
+		/**
+		 * [$ 获取id]
+		 * @param  {[String]} id
+		 * @return {[object]} dom节点
+		 */
+		function $(id) {
+			return document.getElementById(id);
+		}
+
+		/**
+		 * [clear 清除画布]
+		 * @param  {[object]} context
+		 * @return {[void]}       
+		 */
+		function clear(context) {
+			context.clearRect(0, 0, WIDTH, HEIGHT);
+		}
+
+		/**
+		 * [createCanvasImage description]
+		 * @param  {[object]} ele     [dom节点]
+		 * @param  {[object]} context [画布]
+		 * @return {[void]}
+		 */
+		function createCanvasImage(ele, context) {
+			var img = ele.getElementsByTagName('img')[0],
+				src = context.canvas.toDataURL();
+			if(img) {
+				var a = ele.getElementsByTagName('a')[0];
+				a && (a.href = src);
+				img.src = src;
+			} else {
+				ele.innerHTML = "<img src="+src+" alt='' />";
+			}
+		}
+
+
+		/**
+		 * [d2a 角度转弧度]
+		 * @param  {[number]} n [角度]
+		 * @return {[number]}   [弧度]
+		 */
+		function d2a(n) {
+			return n * Math.PI / 180;
+		}
+
+		function draw_line_dash(context, arg, i) {
+			i = i || 0;
+
+			context.beginPath();
+			context.setLineDash(arg);
+			context.lineDashOffset = i;
+
+			context.moveTo(0, 0);
+			context.lineTo(WIDTH, HEIGHT);
+
+			context.stroke();
+			context.closePath();
+		}
+
+		function exe_draw_line_dash(ele, arg, i) {
+			clear(context);
+			draw_line_dash(context, arg, i);
+			createCanvasImage(ele, context);
+		}
+
+		function getPoint() {
+			var lastX = CX,
+				lastY = CY,
+				iscale = 10,
+				deg = 0,points = [];
+
+			for(var i = 0; i < WIDTH-iscale; i+=iscale) {
+				var a = d2a(deg+=90),
+					x = Math.cos(a) * i + lastX,
+					y = Math.sin(a) * i + lastY;
+				lastX = x;
+				lastY = y;
+				points.push({x: lastX, y: lastY})
+			}
+			return points;
+		}
+
+		function base_draw_line(cb) {
+			context.beginPath();
+			typeof cb === "function" && cb(context);
+			context.moveTo(points[0].x, points[0].y);
+			points.forEach(function(item) {
+				context.lineTo(item.x, item.y);
+			})
+			context.stroke();
+			context.closePath();
+			
+		}
+
+		// init
+		var WIDTH = 200,
+			HEIGHT = 200,
+			CX = WIDTH / 2,
+			CY = HEIGHT / 2,
+			context = createCanvas(),
+			line_dash_1 = $('line_dash_1'),
+			line_dash_2 = $('line_dash_2'),
+			line_dash_3 = $('line_dash_3'),
+			line_dash_4 = $('line_dash_4'),
+			line_dash_5 = $('line_dash_5'),
+			line_move_to = $('line_move_to'),
+			j = 0,
+			points = getPoint();
+
+			clear(context);
+			base_draw_line();
+			createCanvasImage(line_move_to, context);
+
+			exe_draw_line_dash(line_dash_1, [5]);
+			exe_draw_line_dash(line_dash_2, [5, 10]);
+			exe_draw_line_dash(line_dash_3, [5, 10, 15]);
+			exe_draw_line_dash(line_dash_4, [5, 10, 15, 20]);
+
+			function next() {
+				clear(context);
+				base_draw_line(function(c) {
+					c.setLineDash([10, 2]);
+					c.lineDashOffset = j+=10;
+				});
+				setTimeout(next, 30);
+			}
+			next();
+
+			line_dash_5.appendChild(context.canvas);
+
+
+			// 自定义虚线
+			({
+				/**
+			     * [calcDistance 两点之间的距离]
+			     * @param  {[Object]} p1 [坐标点1]
+			     * @param  {[Object]} p2 [坐标点2]
+			     */
+			    calcDistance: function (p1, p2) {
+			        var a = (p1.x - p2.x),
+			        	b = (p1.y - p2.y);
+			        return Math.sqrt(a * a + b * b);
+			    },
+
+			    /**
+			     * [drawDashedLine 画虚线]
+			     * @param  {[Object]} ctx          [context]
+			     * @param  {[Object]} p1           [起点]
+			     * @param  {[Object]} p2           [终点]
+			     * @param  {[Number]} dashedLength [虚线长度]
+			     */
+			    drawDashedLine: function (ctx, p1, p2, dashedLength) {
+			        var s = this.calcDistance(p1, p2);
+			        	f = Math.round(s / dashedLength) || 1,
+			        	a = (p1.x - p2.x) / f,
+			        	b = (p1.y - p2.y) / f;
+			        ctx.beginPath();
+			        ctx.lineWidth = 2;
+			        for (var i = 0; i < f; i++) {
+			        	ctx[i % 2 == 0 ? 'moveTo' : 'lineTo'](p1.x - i * a, p1.y - i * b);
+			        }
+			        ctx.stroke();
+			        ctx.closePath();
+			    },
+			    draw: function(ctx) {
+			    	var W = this.W,
+			    		H = this.H;
+			    	this.drawDashedLine(ctx, {x: 0, y: 0}, {x: W, y: H}, this.dashedLength);
+			    	this.drawDashedLine(ctx, {x: W, y: 0}, {x: 0, y: H}, this.dashedLength);
+			    	this.drawDashedLine(ctx, {x: W / 2, y: 0}, {x: W / 2, y: H}, this.dashedLength);
+			    	this.drawDashedLine(ctx, {x: 0, y: H / 2}, {x: W, y: H / 2}, this.dashedLength);
+			    },
+			    init: function() {
+			    	this.ctx = createCanvas();
+			    	this.dom = $('define_dash');
+			    	this.W = WIDTH;
+			    	this.H = HEIGHT;
+			    	this.dashedLength = 5;
+			    	this.draw(this.ctx);
+			    	createCanvasImage(this.dom, this.ctx);
+
+			    }
+			}).init();
+	})();
+
+</script>
