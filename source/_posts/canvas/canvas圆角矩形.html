@@ -1,0 +1,221 @@
+---
+title: canvas圆角矩形(一) 
+categories: 前端
+tags: [javascript, html5, canvas]
+date: 2017/5/11 11:34:46   
+---
+
+
+<h2>圆角</h2>
+<p>在canvas中可以绘制矩形，但还是觉得给矩形加下圆角看出来比较美观。canvas没有现成的api可供使用，只能想到api中有两个方法可以用来画弧：</p>
+<ul>
+	<li>arcTo</li>
+	<li>quadraticCurveTo</li>
+</ul>
+<p>有了这两个方法，离可以绘制出矩形又进了一步，思路就是<strong>用圆角和直线拼接</strong>。我们先尝试用arcTo绘制一个矩形看看能不能实现：</p>
+
+<h2>arcTo</h2>
+
+<p>此方法接收5个参数：</p>
+
+```js
+// x1	弧的起点的 x 坐标
+// y1	弧的起点的 y 坐标
+// x2	弧的终点的 x 坐标
+// y2	弧的终点的 y 坐标
+// r	弧的半径
+context.arcTo(x1, x2, y1, y2, r);
+```
+<div id="rect_arcto"></div>
+
+```js
+	/**
+	 * [d2a 角度转弧度]
+	 * @param  {[number]} n [角度]
+	 * @return {[number]}   [弧度]
+	 */
+	function d2a(n) {
+		return n * Math.PI / 180;
+	}
+
+	/**
+	 * [getPoints 获取矩形顶点]
+	 * @param  {[Number]} x [x坐标]
+	 * @param  {[Number]} y [y坐标]
+	 * @param  {[Number]} w [宽度]
+	 * @param  {[Number]} h [高度]
+	 * @return {[Array]}   [数组]
+	 */
+	function getRectPoints(x, y, w, h) {
+		var points = [],
+    		cx = x, cy = y;
+		for(var i = 0; i <= 4; i++) {
+			var de = d2a(i * 90),
+				x1 = cx + Math.cos(de) * w,
+				y1 = cy + Math.sin(de) * h; 
+			cx = x1, cy = y1;
+			points.push({x:x1, y: y1});
+		}
+		return points;
+	}
+
+
+	/**
+	 * [drawRadiusRect 画圆角矩形]
+	 * @param  {[Number]} x [x坐标]
+	 * @param  {[Number]} y [y坐标]
+	 * @param  {[Number]} w [宽度]
+	 * @param  {[Number]} h [高度]
+	 * @param  {[Number]} r [弧度半径]
+	 */
+	function drawRoundRect(ctx, x, y, w, h, r) {
+		if(r > Math.abs(w / 2)) r = Math.abs(w / 2);
+		var points = getRectPoints(x, y, w, h),
+			sx = x + (w > 0 ? r : -r),
+			sy = y;
+		ctx.beginPath();
+		points.forEach(function(item, index) {
+			ctx.arcTo(sx, sy, item.x, item.y, r);
+			sx = item.x;
+			sy = item.y;
+		})
+		ctx.stroke();	
+		ctx.closePath();
+	}
+
+```
+
+
+<h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/dash_line/index.html">#下载源码</a></h2>
+
+<script>
+
+	(function() {
+		
+		// 不支持canvas
+		if(!document.createElement('canvas').getContext) return false;
+
+		/**
+		 * [createCanvas 创建canvas元素]
+		 * @return {[object]}
+		 */
+		function createCanvas() {
+			var canvas =  document.createElement('canvas');
+			var context = canvas.getContext('2d');
+			canvas.width = WIDTH;
+			canvas.height = HEIGHT;
+			return context;
+		}
+
+		/**
+		 * [$ 获取id]
+		 * @param  {[String]} id
+		 * @return {[object]} dom节点
+		 */
+		function $(id) {
+			return document.getElementById(id);
+		}
+
+		/**
+		 * [clear 清除画布]
+		 * @param  {[object]} context
+		 * @return {[void]}       
+		 */
+		function clear(context) {
+			context.clearRect(0, 0, WIDTH, HEIGHT);
+		}
+
+		/**
+		 * [createCanvasImage description]
+		 * @param  {[object]} ele     [dom节点]
+		 * @param  {[object]} context [画布]
+		 * @return {[void]}
+		 */
+		function createCanvasImage(ele, context) {
+			var img = ele.getElementsByTagName('img')[0],
+				src = context.canvas.toDataURL();
+			if(img) {
+				var a = ele.getElementsByTagName('a')[0];
+				a && (a.href = src);
+				img.src = src;
+			} else {
+				ele.innerHTML = "<img src="+src+" alt='' />";
+			}
+		}
+
+
+		/**
+		 * [d2a 角度转弧度]
+		 * @param  {[number]} n [角度]
+		 * @return {[number]}   [弧度]
+		 */
+		function d2a(n) {
+			return n * Math.PI / 180;
+		}
+
+		/**
+		 * [getPoints 获取矩形顶点]
+		 * @param  {[Number]} x [x坐标]
+		 * @param  {[Number]} y [y坐标]
+		 * @param  {[Number]} w [宽度]
+		 * @param  {[Number]} h [高度]
+		 * @return {[Array]}   [数组]
+		 */
+		function getRectPoints(x, y, w, h) {
+			var points = [],
+	    		cx = x, cy = y;
+			for(var i = 0; i <= 4; i++) {
+				var de = d2a(i * 90),
+					x1 = cx + Math.cos(de) * w,
+					y1 = cy + Math.sin(de) * h; 
+				cx = x1, cy = y1;
+				points.push({x:x1, y: y1});
+			}
+			return points;
+		}
+
+
+		/**
+		 * [drawRadiusRect 画圆角矩形]
+		 * @param  {[Number]} x [x坐标]
+		 * @param  {[Number]} y [y坐标]
+		 * @param  {[Number]} w [宽度]
+		 * @param  {[Number]} h [高度]
+		 * @param  {[Number]} r [弧度半径]
+		 */
+		function drawRoundRect(ctx, x, y, w, h, r) {
+			if(r > Math.abs(w / 2)) r = Math.abs(w / 2);
+			var points = getRectPoints(x, y, w, h),
+				sx = x + (w > 0 ? r : -r),
+				sy = y;
+			ctx.beginPath();
+			points.forEach(function(item, index) {
+				ctx.arcTo(sx, sy, item.x, item.y, r);
+				sx = item.x;
+				sy = item.y;
+			})
+			ctx.stroke();	
+			ctx.closePath();
+		}
+
+		function draw_rect_arcto () {
+			for(var i = 0; i < WIDTH; i+=10) {
+				drawRoundRect(context, i, i, WIDTH - i * 2, HEIGHT - i * 2, 10);
+			}
+			createCanvasImage(rect_arcto, context);
+		}
+		
+		// init
+		var WIDTH = 200,
+			HEIGHT = 200,
+			CX = WIDTH / 2,
+			CY = HEIGHT / 2,
+			context = createCanvas(),
+			rect_arcto = $('rect_arcto');
+
+		// 用atcto画圆角
+		draw_rect_arcto();
+
+	})();
+
+</script>
