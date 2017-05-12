@@ -1,0 +1,409 @@
+---
+title: canvas圆角矩形(二) 
+categories: 前端
+tags: [javascript, html5, canvas]
+date: 2017/5/12 15:34:46   
+---
+
+
+<h2>圆角</h2>
+<p>在上篇文章中我们提到有两种方式可以实现圆角矩形，今天我们尝试用另一种方式来绘制，那就是用二次贝塞尔曲线</p>
+<ul>
+	<li><a href="/2017/05/12/canvas/canvas圆角矩形2/">quadraticCurveTo（主角）</a></li>
+	<li><a href="/2017/05/11/canvas/canvas圆角矩形/">arcTo</a></li>
+</ul>
+
+<p>这种实现方式其实与arcTo实现方式是一样的，就是直线加圆角拼接而成的圆角矩形</p>
+
+
+<h2>quadraticCurveTo</h2>
+
+<p>此方法接收5个参数：</p>
+
+```js
+// cpx	贝塞尔控制点的 x 坐标
+// cpy	贝塞尔控制点的 y 坐标
+// x	结束点的 x 坐标
+// y	结束点的 y 坐标
+context.quadraticCurveTo(cpx,cpy,x,y);
+```
+
+<!-- more -->
+
+<div id="rect_quadratic"></div>
+
+```js
+/**
+ * [drawRoundRectSimple 画圆角矩形]
+ * @param  {[object]} ctx [context]
+ * @param  {[Number]} x [x坐标]
+ * @param  {[Number]} y [y坐标]
+ * @param  {[Number]} w [宽度]
+ * @param  {[Number]} h [高度]
+ * @param  {[Number]} r [弧度半径]
+ */
+function drawRoundRectSimple(ctx, x, y, w, h, r) {
+	ctx.beginPath();
+	ctx.moveTo(x+r, y);
+	ctx.lineTo(x+w-r, y);
+	ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+	ctx.lineTo(x+w, y+h-r);
+	ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+	ctx.lineTo(x+r, y+h);
+	ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+	ctx.lineTo(x, y+r);
+	ctx.quadraticCurveTo(x, y, x+r, y);
+	ctx.stroke();
+	ctx.closePath();
+}
+```
+<div id="rect_simple"></div>
+<br>
+<p>以上代码很简单的就绘制出了圆角矩形。为了与arcto方法保持一致的用法，我也将宽、高设置为负数调用一下</p>
+
+```js
+// 宽和高部分宽高改为负数
+drawRoundRect(context, 10, 10, 80, 80, 10);
+drawRoundRect(context, 190, 10, -80, 80, 10);
+drawRoundRect(context, 10, 190, 80, -80, 10);
+drawRoundRect(context, 190, 190, -80, -80, 10);
+```
+<div id="rect_simple2"></div>
+<br>
+<p>得出的结论就是只有宽、高为正数的时候绘制出的图形还是我们想要的，为负数的时候并不是我们想要的图案。那么就要继续优化此函数</p>
+
+<br>
+
+<p>还是把昨天写的那两个工具函数及注释也拷贝到这里，方便查看。</p>
+
+```js
+	/**
+	 * [d2a 角度转弧度]
+	 * @param  {[number]} n [角度]
+	 * @return {[number]}   [弧度]
+	 */
+	function d2a(n) {
+		return n * Math.PI / 180;
+	}
+```
+<p>d2a是个工具函数，把角度转为弧度。</p>
+
+```js
+/**
+ * [getPoints 获取矩形顶点]
+ * @param  {[object]} ctx [context]
+ * @param  {[Number]} x [x坐标]
+ * @param  {[Number]} y [y坐标]
+ * @param  {[Number]} w [宽度]
+ * @param  {[Number]} h [高度]
+ * @param  {[Number]} r [弧度半径]
+ */
+function getRectPoints(x, y, w, h) {
+	var points = [],
+		cx = x, cy = y;
+	for(var i = 0; i <= 4; i++) {
+		var de = d2a(i * 90),
+			x1 = cx + Math.cos(de) * w,
+			y1 = cy + Math.sin(de) * h; 
+		cx = x1, cy = y1;
+		points.push({x:x1, y: y1});
+	}
+	return points;
+}
+```
+<p>getRectPoints函数的作用就是获取矩形的四个顶点坐标。下面举个例子说明一下实现思路：</p>
+<p>正如一个人向正南走了100米，右转向正西走了100米，右转向正北走了100米,然后右转向正东走了100米，回到了原点。以上函数得到的四个点，正是这个人停留的四个点，也就是矩形的四个顶点。</p>
+
+<div id="rect_walk"></div>
+
+```js
+	/**
+	 * [drawRadiusRect 画圆角矩形]
+	 * @param  {[Number]} x [x坐标]
+	 * @param  {[Number]} y [y坐标]
+	 * @param  {[Number]} w [宽度]
+	 * @param  {[Number]} h [高度]
+	 * @param  {[Number]} r [弧度半径]
+	 */
+	function drawRoundRect(ctx, x, y, w, h, r) {
+		if(r > Math.abs(w/2)) r = Math.abs(w/2);
+		var points = getRectPoints(x, y, w, h);
+		ctx.beginPath();
+		points.forEach(function(item, index) {
+			var d1 = d2a(index * 90),
+				x1 = Math.cos(d1) * r,
+				y1 = Math.sin(d1) * r,
+				d2 = d2a((index-1) * 90);
+				x2 = Math.cos(d2) * r;
+				y2 = Math.sin(d2) * r;
+			if(w > 0) {
+				x1 *= -1;
+				x2 *= -1;
+			}
+			if(h > 0) {
+				y1 *= -1;
+				y2 *= -1;
+			}
+			ctx.lineTo(item.x + x1, item.y + y1); 
+			ctx.quadraticCurveTo(item.x, item.y, item.x + x2, item.y + y2);
+		})
+		ctx.stroke();	
+		ctx.closePath();
+	}
+
+	// 宽和高为正、负数均不影响
+	drawRoundRect(context, 10, 10, 80, 80, 10);
+	drawRoundRect(context, 190, 10, -80, 80, 10);
+	drawRoundRect(context, 10, 190, 80, -80, 10);
+	drawRoundRect(context, 190, 190, -80, -80, 10);
+
+```
+<div id="rect_round"></div>
+<br>
+<p>上面的函数无非就是把让人看着头疼的x,y,w,h,r相加减改为了循环，然后统一了r,看起来复杂了不少，但最终效果正是我们要的。</p>
+
+
+
+
+<h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/roundrect1/index.html">#下载源码</a></h2>
+
+<script>
+
+	(function() {
+		
+		// 不支持canvas
+		if(!document.createElement('canvas').getContext) return false;
+
+		/**
+		 * [createCanvas 创建canvas元素]
+		 * @return {[object]}
+		 */
+		function createCanvas() {
+			var canvas =  document.createElement('canvas');
+			var context = canvas.getContext('2d');
+			canvas.width = WIDTH;
+			canvas.height = HEIGHT;
+			return context;
+		}
+
+		/**
+		 * [$ 获取id]
+		 * @param  {[String]} id
+		 * @return {[object]} dom节点
+		 */
+		function $(id) {
+			return document.getElementById(id);
+		}
+
+		/**
+		 * [clear 清除画布]
+		 * @param  {[object]} context
+		 * @return {[void]}       
+		 */
+		function clear(context) {
+			context.clearRect(0, 0, WIDTH, HEIGHT);
+		}
+
+		/**
+		 * [createCanvasImage description]
+		 * @param  {[object]} ele     [dom节点]
+		 * @param  {[object]} context [画布]
+		 * @return {[void]}
+		 */
+		function createCanvasImage(ele, context) {
+			var img = ele.getElementsByTagName('img')[0],
+				src = context.canvas.toDataURL();
+			if(img) {
+				var a = ele.getElementsByTagName('a')[0];
+				a && (a.href = src);
+				img.src = src;
+			} else {
+				ele.innerHTML = "<img src="+src+" alt='' />";
+			}
+		}
+
+
+		/**
+		 * [d2a 角度转弧度]
+		 * @param  {[number]} n [角度]
+		 * @return {[number]}   [弧度]
+		 */
+		function d2a(n) {
+			return n * Math.PI / 180;
+		}
+
+		/**
+		 * [getPoints 获取矩形顶点]
+		 * @param  {[Number]} x [x坐标]
+		 * @param  {[Number]} y [y坐标]
+		 * @param  {[Number]} w [宽度]
+		 * @param  {[Number]} h [高度]
+		 * @return {[Array]}   [数组]
+		 */
+		function getRectPoints(x, y, w, h) {
+			var points = [],
+	    		cx = x, cy = y;
+			for(var i = 0; i <= 4; i++) {
+				var de = d2a(i * 90),
+					x1 = cx + Math.cos(de) * w,
+					y1 = cy + Math.sin(de) * h; 
+				cx = x1, cy = y1;
+				points.push({x:x1, y: y1});
+			}
+			return points;
+		}
+
+
+		/**
+		 * [createText 添加文字]
+		 * @param  {[type]} context [description]
+		 * @param  {[number]} font    [字体]
+		 * @param  {[number]} x       [x坐标]
+		 * @param  {[number]} y       [y坐标]
+		 */
+		function createText(context, font, x, y) {
+			context.textAlign = 'center';
+			context.textBaseline = 'middle';
+			context.font = '14px Arial';
+			context.fillText(font, x, y);
+		}
+
+		/**
+		 * [draw_quadraticCurveTo 演示二次贝塞尔]
+		 * @param  {[type]} context [description]
+		 * @return {[type]}         [description]
+		 */
+		function draw_quadraticCurveTo(context) {
+			var points = getRectPoints(50, 50, 100, 100),
+				p4 = points[4],
+				p3 = points[3],
+				p2 = points[2];
+			clear(context);
+			context.beginPath();
+			context.moveTo(p4.x, p4.y);
+			context.quadraticCurveTo(p3.x, p3.x, p2.x, p2.y);
+			context.stroke();
+			context.closePath();
+			createText(context, '开始点('+Math.round(p4.x)+', '+Math.round(p4.y)+')', p4.x, p4.y - 10);
+			createText(context, '控制点('+Math.round(p3.x)+', '+Math.round(p3.y)+')', p3.x, p3.y );
+			createText(context, '结束点('+Math.round(p2.x)+', '+Math.round(p2.y)+')', p2.x, p2.y + 10);
+			createCanvasImage(rect_quadratic, context);
+		}
+
+		/**
+		 * [drawRoundRectSimple 简易版二次贝塞尔方式实现圆角矩形]
+		 * @param  {[object]} ctx [context]
+         * @param  {[Number]} x [x坐标]
+         * @param  {[Number]} y [y坐标]
+         * @param  {[Number]} w [宽度]
+         * @param  {[Number]} h [高度]
+         * @param  {[Number]} r [弧度半径]
+		 */
+		function drawRoundRectSimple(ctx, x, y, w, h, r) {
+			ctx.beginPath();
+			ctx.moveTo(x+r, y);
+			ctx.lineTo(x+w-r, y);
+			ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+			ctx.lineTo(x+w, y+h-r);
+			ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+			ctx.lineTo(x+r, y+h);
+			ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+			ctx.lineTo(x, y+r);
+			ctx.quadraticCurveTo(x, y, x+r, y);
+			ctx.stroke();
+			ctx.closePath();
+		}
+
+
+		/**
+		 * [draw_rect_round_simple 宽和高为负数]
+		 */
+		function draw_rect_round_simple(context) {
+			clear(context);
+			drawRoundRectSimple(context, 10, 10, 80, 80, 10);
+			drawRoundRectSimple(context, 190, 10, -80, 80, 10);
+			drawRoundRectSimple(context, 10, 190, 80, -80, 10);
+			drawRoundRectSimple(context, 190, 190, -80, -80, 10);
+			createCanvasImage(rect_simple2, context);
+		}
+
+
+
+		/**
+		 * [drawRadiusRect 复杂版二次贝塞尔方式实现圆角矩形]
+		 * @param  {[object]} ctx [context]
+         * @param  {[Number]} x [x坐标]
+         * @param  {[Number]} y [y坐标]
+         * @param  {[Number]} w [宽度]
+         * @param  {[Number]} h [高度]
+         * @param  {[Number]} r [弧度半径]
+		 */
+		function drawRoundRect(ctx, x, y, w, h, r) {
+			if(r > Math.abs(w/2)) r = Math.abs(w/2);
+			var points = getRectPoints(x, y, w, h);
+			ctx.beginPath();
+			points.forEach(function(item, index) {
+				var d1 = d2a(index * 90),
+					x1 = Math.cos(d1) * r,
+					y1 = Math.sin(d1) * r,
+					d2 = d2a((index-1) * 90);
+					x2 = Math.cos(d2) * r;
+					y2 = Math.sin(d2) * r;
+				if(w > 0) {
+					x1 *= -1;
+					x2 *= -1;
+				}
+				if(h > 0) {
+					y1 *= -1;
+					y2 *= -1;
+				}
+				ctx.lineTo(item.x + x1, item.y + y1); 
+				ctx.quadraticCurveTo(item.x, item.y, item.x + x2, item.y + y2);
+			})
+			ctx.stroke();	
+			ctx.closePath();
+		}
+
+
+
+		/**
+		 * [draw_rect_round_simple 宽和高为正、负数均不影响]
+		 */
+		function draw_rect_round(context) {
+			clear(context);
+			drawRoundRect(context, 10, 10, 80, 80, 10);
+			drawRoundRect(context, 190, 10, -80, 80, 10);
+			drawRoundRect(context, 10, 190, 80, -80, 10);
+			drawRoundRect(context, 190, 190, -80, -80, 10);
+			createCanvasImage(rect_round, context);
+		}
+		
+		
+		// init
+		var WIDTH = 200,
+			HEIGHT = 200,
+			CX = WIDTH / 2,
+			CY = HEIGHT / 2,
+			context = createCanvas(),
+			rect_quadratic = $('rect_quadratic'),
+			rect_simple = $('rect_simple'),
+			rect_simple2 = $('rect_simple2'),
+			rect_round = $('rect_round');
+
+		// 演示二次贝塞尔
+		clear(context);
+		draw_quadraticCurveTo(context);
+
+		// 简易实现方式
+		clear(context);
+		drawRoundRectSimple(context, 10, 10, 180, 180, 10);
+		createCanvasImage(rect_simple, context);
+
+		// 宽高设置为负数绘制圆角矩形
+		draw_rect_round_simple(context);
+
+		// 宽高为正，为负均不影响
+		draw_rect_round(context);
+	})();
+
+</script>

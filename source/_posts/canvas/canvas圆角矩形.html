@@ -8,11 +8,15 @@ date: 2017/5/11 11:34:46
 
 <h2>圆角</h2>
 <p>在canvas中可以绘制矩形，但还是觉得给矩形加下圆角看出来比较美观。canvas没有现成的api可供使用，只能想到api中有两个方法可以用来画弧：</p>
+
 <ul>
-	<li>arcTo</li>
-	<li>quadraticCurveTo</li>
+	<li><a href="/2017/05/11/canvas/canvas圆角矩形/">arcTo（主角）</a></li>
+	<li><a href="/2017/05/12/canvas/canvas圆角矩形2/">quadraticCurveTo</a></li>
 </ul>
-<p>有了这两个方法，离可以绘制出矩形又进了一步，思路就是<strong>用圆角和直线拼接</strong>。我们先尝试用arcTo绘制一个矩形看看能不能实现：</p>
+
+<p>有了这两个方法，离可以绘制出矩形又进了一步，思路就是<strong>用圆角和直线拼接</strong>。我们先尝试用arcTo绘制一个矩形看看能不能实现,第二种方式明天再揭晓：</p>
+
+<!-- more -->
 
 <h2>arcTo</h2>
 
@@ -37,7 +41,10 @@ context.arcTo(x1, x2, y1, y2, r);
 	function d2a(n) {
 		return n * Math.PI / 180;
 	}
+```
+<p>d2a是个工具函数，把角度转为弧度。</p>
 
+```js
 	/**
 	 * [getPoints 获取矩形顶点]
 	 * @param  {[Number]} x [x坐标]
@@ -58,8 +65,13 @@ context.arcTo(x1, x2, y1, y2, r);
 		}
 		return points;
 	}
+```
+<p>getRectPoints函数的作用就是获取矩形的四个顶点坐标。下面举个例子说明一下实现思路：</p>
+<p>正如一个人向正南走了100米，右转向正西走了100米，右转向正北走了100米,然后右转向正东走了100米，回到了原点。以上函数得到的四个点，正是这个人停留的四个点，也就是矩形的四个顶点。</p>
 
+<div id="rect_walk"></div>
 
+```js
 	/**
 	 * [drawRadiusRect 画圆角矩形]
 	 * @param  {[Number]} x [x坐标]
@@ -83,10 +95,18 @@ context.arcTo(x1, x2, y1, y2, r);
 		ctx.closePath();
 	}
 
+	// 宽和高为正、负数均不影响
+	drawRoundRect(context, 10, 10, 80, 80, 10);
+	drawRoundRect(context, 190, 10, -80, 80, 10);
+	drawRoundRect(context, 10, 190, 80, -80, 10);
+	drawRoundRect(context, 190, 190, -80, -80, 10);
+
 ```
 
+<div id="rect_round"></div>
 
-<h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/dash_line/index.html">#下载源码</a></h2>
+
+<h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/roundrect1/index.html">#下载源码</a></h2>
 
 <script>
 
@@ -198,23 +218,73 @@ context.arcTo(x1, x2, y1, y2, r);
 			ctx.closePath();
 		}
 
-		function draw_rect_arcto () {
+		/**
+		 * [draw_rect_arcto 绘制多个矩形]
+		 */
+		function draw_rect_arcto (context) {
+			clear(context);
 			for(var i = 0; i < WIDTH; i+=10) {
 				drawRoundRect(context, i, i, WIDTH - i * 2, HEIGHT - i * 2, 10);
 			}
 			createCanvasImage(rect_arcto, context);
 		}
-		
+
+
+		/**
+		 * [draw_rect_round 宽和高为正、负数均不影响]
+		 */
+		function draw_rect_round(context) {
+			clear(context);
+			drawRoundRect(context, 10, 10, 80, 80, 10);
+			drawRoundRect(context, 190, 10, -80, 80, 10);
+			drawRoundRect(context, 10, 190, 80, -80, 10);
+			drawRoundRect(context, 190, 190, -80, -80, 10);
+			createCanvasImage(rect_round, context);
+		}
+
+		/**
+		 * [draw_rect_walk 模拟走路]
+		 */
+		function draw_rect_walk(context) {
+			// clear(context);
+			// var points = getRectPoints(10, 10, 180, 180);
+			// var lastX = points[0].x,
+			// 	lastY = points[0].y;
+			// points.forEach(function(item, index) {
+			// 	setTimeout(function() {
+			// 		context.beginPath();
+			// 		context.moveTo(lastX, lastY);
+			// 		context.lineTo(item.x, item.y);
+			// 		context.stroke();
+			// 		context.closePath();
+			// 		lastX = item.x;
+			// 		lastY = item.y;
+			// 	}, (index + 1) * 1000)
+			// })
+
+			// rect_walk.appendChild(context.canvas);
+		}
+
+
 		// init
 		var WIDTH = 200,
 			HEIGHT = 200,
 			CX = WIDTH / 2,
 			CY = HEIGHT / 2,
 			context = createCanvas(),
-			rect_arcto = $('rect_arcto');
+			rect_arcto = $('rect_arcto'),
+			rect_walk = $('rect_walk'),
+			rect_round = $('rect_round');
 
 		// 用atcto画圆角
-		draw_rect_arcto();
+		draw_rect_arcto(context);
+
+		// 四个圆角矩形
+		draw_rect_round(context);
+
+		// 模拟走路
+		draw_rect_walk(context);
+
 
 	})();
 
