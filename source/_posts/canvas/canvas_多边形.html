@@ -97,61 +97,16 @@ date: 2017/5/8 15:27:21
 
 <h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/polygon/index.html">#下载源码</a></h2>
 
+
+<script src="/static/js/canvas/tool.js"></script>
 <script>
 
 	(function() {
 		
 		// 不支持canvas
-		if(!document.createElement('canvas').getContext) return false;
+		if(!__.canvas) return false;
 
-		/**
-		 * [createCanvas 创建canvas元素]
-		 * @return {[object]}
-		 */
-		function createCanvas() {
-			var canvas =  document.createElement('canvas');
-			var context = canvas.getContext('2d');
-			canvas.width = 200;
-			canvas.height = 200;
-			return context;
-		}
-
-		/**
-		 * [$ 获取id]
-		 * @param  {[String]} id
-		 * @return {[object]} dom节点
-		 */
-		function $(id) {
-			return document.getElementById(id);
-		}
-
-		/**
-		 * [clear 清除画布]
-		 * @param  {[object]} context
-		 * @return {[void]}       
-		 */
-		function clear(context) {
-			context.clearRect(0, 0, WIDTH, HEIGHT);
-		}
-
-		/**
-		 * [createCanvasImage description]
-		 * @param  {[object]} ele     [dom节点]
-		 * @param  {[object]} context [画布]
-		 * @return {[void]}
-		 */
-		function createCanvasImage(ele, context) {
-			var img = ele.getElementsByTagName('img')[0],
-				src = context.canvas.toDataURL();
-			if(img) {
-				var a = ele.getElementsByTagName('a')[0];
-				a.href = src;
-				img.src = src;
-			} else {
-				ele.innerHTML = "<img src="+src+" alt='' />";
-			}
-		}
-
+		
 		/**
 		 * [createDots 创建中心点]
 		 * @param  {[object]} context [画布]
@@ -177,14 +132,6 @@ date: 2017/5/8 15:27:21
 			context.closePath();
 		}
 
-		/**
-		 * [d2a 角度转弧度]
-		 * @param  {[number]} n [角度]
-		 * @return {[number]}   [弧度]
-		 */
-		function d2a(n) {
-			return n * Math.PI / 180;
-		}
 
 		/**
 		 * [side_points 各边顶点]
@@ -196,8 +143,8 @@ date: 2017/5/8 15:27:21
 				val = rotate.value * 1;
 			for(var i = 0; i <= SIDE; i++) {
 				var point = {};
-				point.x = Math.cos(d2a(angle * i + val)) * RADIUS + WIDTH / 2;
-				point.y = Math.sin(d2a(angle * i + val)) * RADIUS + HEIGHT / 2;
+				point.x = Math.cos(__.d2a(angle * i + val)) * RADIUS + WIDTH / 2;
+				point.y = Math.sin(__.d2a(angle * i + val)) * RADIUS + HEIGHT / 2;
 				points.push(point);
 			}
 			return points;
@@ -251,9 +198,9 @@ date: 2017/5/8 15:27:21
 			span_fill.innerText = fill.value;
 			span_stroke.innerText = stroke.value;
 
-			clear(context);
+			__.clear(context);
 			lineToSide(context);
-			createCanvasImage(polygon_range_side, context);
+			__.createCanvasImage(polygon_range_side, context);
 		}
 
 		function onchangeHandler() {
@@ -261,44 +208,44 @@ date: 2017/5/8 15:27:21
 		}
 
 		// init
-		var polygon_dot = $('polygon_dot'), // 中心点
-			polygon_radius = $('polygon_radius'), // 半径
-			polygon_points = $('polygon_points'), // 各顶点集合
-			polygon_sides = $('polygon_sides'), // 边
-			span_rotate = $('span_rotate'), // 旋转
-			rotate = $('rotate'), // 旋转
-			span_opacity = $('span_opacity'), // 旋转
-			opacity = $('opacity'), // 透明
-			range_side = $('range_side'), 
-			polygon_range_side = $('polygon_range_side'), 
-			span_stroke = $('span_stroke'), 
-			stroke = $('stroke'), 
-			span_fill = $('span_fill'),
-			fill = $('fill'),
-			span_side = $('span_side'),
+		var polygon_dot = __.$('polygon_dot'), // 中心点
+			polygon_radius = __.$('polygon_radius'), // 半径
+			polygon_points = __.$('polygon_points'), // 各顶点集合
+			polygon_sides = __.$('polygon_sides'), // 边
+			span_rotate = __.$('span_rotate'), // 旋转
+			rotate = __.$('rotate'), // 旋转
+			span_opacity = __.$('span_opacity'), // 旋转
+			opacity = __.$('opacity'), // 透明
+			range_side = __.$('range_side'), 
+			polygon_range_side = __.$('polygon_range_side'), 
+			span_stroke = __.$('span_stroke'), 
+			stroke = __.$('stroke'), 
+			span_fill = __.$('span_fill'),
+			fill = __.$('fill'),
+			span_side = __.$('span_side'),
 			PI2 = Math.PI * 2,
 			DOTS_RADIUS = 3,
 			LINE_WIDTH = 1,
 			SIDE = range_side.value,
-			context = createCanvas(),
+			context = __.createCanvas(),
 			WIDTH = context.canvas.width,
 			HEIGHT = context.canvas.height,
 			RADIUS = WIDTH / 2 - LINE_WIDTH;
 
 			createDots(context);
-			createCanvasImage(polygon_dot, context);
-			clear(context);
+			__.createCanvasImage(polygon_dot, context);
+			__.clear(context);
 
 			createRadius(context);
-			createCanvasImage(polygon_radius, context);
-			clear(context);
+			__.createCanvasImage(polygon_radius, context);
+			__.clear(context);
 
 			createSide(context);
-			createCanvasImage(polygon_points, context);
-			clear(context);
+			__.createCanvasImage(polygon_points, context);
+			__.clear(context);
 
 			lineToSide(context);
-			createCanvasImage(polygon_sides, context);
+			__.createCanvasImage(polygon_sides, context);
 			
 			onchangeHandler();
 			fill.onchange = onchangeHandler;

@@ -89,88 +89,32 @@ date: 2017/5/9 13:33:34
 
 <h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/circle/index.html">#下载源码</a></h2>
 
+<script src="/static/js/canvas/tool.js"></script>
 <script>
 
 	(function() {
 		
 		// 不支持canvas
-		if(!document.createElement('canvas').getContext) return false;
-
-		/**
-		 * [createCanvas 创建canvas元素]
-		 * @return {[object]}
-		 */
-		function createCanvas() {
-			var canvas =  document.createElement('canvas');
-			var context = canvas.getContext('2d');
-			canvas.width = WIDTH;
-			canvas.height = HEIGHT;
-			return context;
-		}
-
-		/**
-		 * [$ 获取id]
-		 * @param  {[String]} id
-		 * @return {[object]} dom节点
-		 */
-		function $(id) {
-			return document.getElementById(id);
-		}
-
-		/**
-		 * [clear 清除画布]
-		 * @param  {[object]} context
-		 * @return {[void]}       
-		 */
-		function clear(context) {
-			context.clearRect(0, 0, WIDTH, HEIGHT);
-		}
-
-		/**
-		 * [createCanvasImage description]
-		 * @param  {[object]} ele     [dom节点]
-		 * @param  {[object]} context [画布]
-		 * @return {[void]}
-		 */
-		function createCanvasImage(ele, context) {
-			var img = ele.getElementsByTagName('img')[0],
-				a = ele.getElementsByTagName('a')[0];
-				src = context.canvas.toDataURL();
-			if(a) {
-				a.href = src;
-				img.src = src;
-			} else {
-
-				ele.innerHTML = "<a href="+src+" class='fancybox fancybox.image' rel='group'><img src="+src+" alt='' /></a>";
-			}
-		}
+		if(!__.canvas) return false;
 
 
-		/**
-		 * [d2a 角度转弧度]
-		 * @param  {[number]} n [角度]
-		 * @return {[number]}   [弧度]
-		 */
-		function d2a(n) {
-			return n * Math.PI / 180;
-		}
 
 		function create_circle_dots(context, x, y, radius) {
 			context.beginPath();
-			context.arc(x, y, radius, d2a(0), d2a(360));
+			context.arc(x, y, radius, __.d2a(0), __.d2a(360));
 			context.fill();
 			context.closePath();
 		}
 
 		function create_circle_dots_stroke(context, x, y, radius) {
 			context.beginPath();
-			context.arc(x, y, radius, d2a(0), d2a(360));
+			context.arc(x, y, radius, __.d2a(0), __.d2a(360));
 			context.stroke();
 			context.closePath();
 		}
 
 		function createCrocess(context, r) {
-			var angle = d2a(-30),
+			var angle = __.d2a(-30),
 				x = Math.cos(angle) * r + CX,
 				y = Math.sin(angle) * r + CY, 
 				h = 10;
@@ -236,38 +180,24 @@ date: 2017/5/9 13:33:34
 		// 圆的轨迹
 		({
 			start: function(context) {
-				var that = this;
-				this.timer = setInterval(function() {
-					var angle = d2a(that.i+=1);
-					var x = (Math.cos(angle) * RADIUS + CX).toFixed();
-					var y = (Math.sin(angle) * RADIUS + CY).toFixed(); 
-					clear(context);
-					create_circle_dots(context, x, y, that.RADIUS);
-					createCanvasImage(that.dom, context);
-					if(that.i > 360) {
-						clearInterval(that.timer);
-						that.timer = null;
-					}
-				}, this.TIME);
+				var angle = __.d2a(this.i+=1);
+				var x = (Math.cos(angle) * RADIUS + CX).toFixed();
+				var y = (Math.sin(angle) * RADIUS + CY).toFixed(); 
+				__.clear(context);
+				create_circle_dots(context, x, y, this.RADIUS);
+				__.createCanvasImage(this.dom, context);
+
+				requestAnimationFrame(this.start.bind(this, context));
 			},
 			init: function() {
 				var that = this;
-				this.dom = $('circle_dots');
+				this.dom = __.$('circle_dots');
 				this.RADIUS = 3;
 				this.timer = null;
 				this.TIME = 1000/30;
 				this.i = 0;
-				this.context = createCanvas();
-				var first = true;
-				// this.start(this.context);
-				window.addEventListener('scroll', function() {
-					if(domInScreen(that.dom)){
-						if(first) {
-							first = false;
-					 		that.start(that.context)
-					 	}
-					}
-				}, false)
+				this.context = __.createCanvas();
+				this.start(that.context);
 			}
 
 		}).init();
@@ -276,15 +206,15 @@ date: 2017/5/9 13:33:34
 		// 坐标详解
 		({
 			start: function(context) {
-				clear(context);
+				__.clear(context);
 				createCrocess(context, this.RADIUS)
 				create_circle_dots_stroke(context, CX, CY, this.RADIUS);
-				createCanvasImage(this.dom, context);
+				__.createCanvasImage(this.dom, context);
 			},
 			init: function() {
-				this.dom = $('circle_detail');
+				this.dom = __.$('circle_detail');
 				this.RADIUS = RADIUS - 20;
-				this.context = createCanvas();
+				this.context = __.createCanvas();
 				this.start(this.context);
 			}
 
@@ -294,43 +224,27 @@ date: 2017/5/9 13:33:34
 		// 坐标详解
 		({
 			start: function(context) {
-				var that = this;
-				this.timer = setInterval(function() {
-					var angle = d2a(that.i+=1);
-					var x = (Math.cos(angle) * that.RADIUS + CX).toFixed();
-					var y = (Math.sin(angle) * that.RADIUS + CY).toFixed(); 
-					clear(context);
-					create_circle_dots_stroke(context, CX, CY, that.RADIUS);
-					createText(context, "("+x+", "+y+")", x, y);
-					createCanvasImage(that.dom, context);
-					if(that.i > 360) {
-						clearInterval(that.timer);
-						that.timer = null;
-					}
-				}, this.TIME);
+				var angle = __.d2a(this.i+=1);
+				var x = (Math.cos(angle) * this.RADIUS + CX).toFixed();
+				var y = (Math.sin(angle) * this.RADIUS + CY).toFixed(); 
+				__.clear(context);
+				create_circle_dots_stroke(context, CX, CY, this.RADIUS);
+				createText(context, "("+x+", "+y+")", x, y);
+				__.createCanvasImage(this.dom, context);
+				requestAnimationFrame(this.start.bind(this, context));
 			},
 			init: function() {
 				var that = this;
-				this.dom = $('circle_end');
+				this.dom = __.$('circle_end');
 				this.RADIUS = RADIUS - 30;
 				this.timer = null;
 				this.TIME = 1000 / 30;
 				this.i = 0;
-				this.context = createCanvas();
-				var first = true;
-				// this.start(this.context);
-				window.addEventListener('scroll', function() {
-					if(domInScreen(that.dom)){
-						if(first) {
-							first = false;
-					 		that.start(that.context)
-					 	}
-					}
-				}, false)
+				this.context = __.createCanvas();
+				this.start(that.context)
 			}
 
 		}).init();
-
 
 	})();
 

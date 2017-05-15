@@ -1,0 +1,199 @@
+---
+title: canvas雷达扫描
+categories: 前端
+tags: [javascript, html5, canvas]
+date: 2017/5/15 15:53:10 
+---
+
+
+<h2>角度渐变</h2>
+
+<p>canvas绘制雷达扫描图像，首先想到的就是一个圆的半径在那里转圈，然后留下扫描过的痕迹。</p>
+<p>用过photoshop的人都会发现渐变工具栏除了，线性渐变、径向渐变、对称渐变，菱形渐变之外还有一种<strong>角度渐变</strong>, 如果我们的canvas也支持这种角度渐变，那么绘制雷达扫描图肯定就是一种很简单的事情，但事与愿违，目前canvas只支持线性渐变（createLinearGradient）与径向渐变（createRadialGradient）这两个方法的用法，以后我们再讨论，今天要做的就是模拟角度渐变，进而绘制出雷达扫描图。</p>
+
+
+<p>参照photoshop中角度渐变，首先要先画一个360°扇形也就圆，然后从扇形起始边开始渐变到结束边。</p>
+
+<p>下面先来认识我们用到的第一个属性：</p>
+
+<!-- more -->
+<h2>arc</h2>
+
+```js
+// x	圆的中心的 x 坐标。
+// y	圆的中心的 y 坐标。
+// r	圆的半径。
+// sAngle	起始角，以弧度计。（弧的圆形的三点钟位置是 0 度）。
+// eAngle	结束角，以弧度计。
+// counterclockwise	可选。规定应该逆时针还是顺时针绘图。
+// False = 顺时针，true = 逆时针。
+context.globalAlpha = number;
+context.arc(x,y,r,sAngle,eAngle,counterclockwise);
+```
+
+<p>一圈有360°，那么我们就生成36个1°的扇形</p>
+
+<div id="radar_arc"></div>
+<br>
+<p>接下来我们给生成的小扇形上色，然后把边框擦除。</p>
+
+<p>上色是有规律的，我要从第一个小扇形开始透明度递增，一共36份，那么第n份的透明度为 n / 36,思路有了，下面来说一个我们用到的第二个属性：</p>
+
+
+<h2>rgba</h2>
+
+```js
+// a 透明值。必须介于 0.0（完全透明） 与 1.0（不透明） 之间。
+rgba(r, g, b, a);
+```
+
+<p>开始着色：</p>
+
+
+
+<div id="radar_opacity"></div>
+
+<p>我们到此就做好了，角度渐变，但是使用这种循环的方式，极其的消耗性能。我例子的做法是将征生成的角度渐变存为图片，然后在canvas上面渲染database64图片。这样只有一次循环生成角度渐变。</p>
+<p><strong>当然了你从一开始就可以使用图片。</strong></p>
+<p>在这里我们也选择使用图片，但这个图片是我们用js动态生成的。可以随意改其他大小，颜色，及角度等等属性，前提是你封装好这个函数。封装先放一边。我们继续下一步工作。</p>
+
+<h2>旋转</h2>
+<p>接下来就简单实现一下雷达效果，就是让他转起来。</p>
+
+<div id="radra_rotate"></div>
+
+
+<h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/radar1/index.html">#下载源码</a></h2>
+<style>
+	#radra_rotate{ text-align: center; }
+</style>
+
+<script src="/static/js/canvas/tool.js"></script>
+<script>
+	(function() {
+		
+		// 不支持canvas
+		if(!__.canvas) return false;
+
+
+		/**
+		 * [draw_radar_arc 生成多个扇形]
+		 * @param  {[object]} context [context]
+		 */
+		function draw_radar_arc(context) {
+			__.clear(context);
+			var lastsAngle = 0;
+			for(var i = 1; i <= 36; i++) {
+				context.beginPath();
+				context.moveTo(CX, CY);
+				context.arc(CX, CY, RADIUS, __.d2a(lastsAngle), __.d2a(i * 10));
+				context.moveTo(CX, CY);
+				context.stroke();
+				context.closePath();
+				lastsAngle = i * 10;
+			}
+			__.createCanvasImage(radar_arc, context);
+		}
+
+
+		/**
+		 * [draw_radar_opacity 开始着色]
+		 * @param  {[object]} context [context]
+		 */
+		function draw_radar_opacity(context, s, e) {
+			s = s || 0;
+			e = e || 360;
+			if(e > 360) e = 360;
+			var lastsAngle = 0,
+				copies = Math.max(Math.min(120, e/2), 60);
+			context.globalCompositeOperation = 'lighter'; // 显示源图像 + 目标图像。
+			for(var i = 1; i <= copies; i++) {
+				var eDeg = i * e / copies;
+				context.beginPath();
+				context.moveTo(CX, CY);
+				// context.fillStyle = 'rgba(255, 102, 0, '+ i/copies +')';
+				context.fillStyle = 'rgba(0, 0, 0, '+ i/copies/2 +')';
+				context.arc(CX, CY, RADIUS, __.d2a(lastsAngle + s), __.d2a(eDeg + s));
+				context.fill();
+				lastsAngle = eDeg;
+			}
+		}
+
+
+		/**
+         * [drawBottom 底面背景]
+         * @param  {[object]} context [context]
+         */
+        function drawBottom(context) {
+            context.beginPath();
+            context.lineWidth = 10;
+            context.strokeStyle = '#000';
+            context.fillStyle = '#7ddd3d';
+            context.arc(0, 0, RADIUS, 0, __.d2a(360));
+            context.fill();
+            context.stroke();
+            context.closePath();
+        }
+
+        /**
+         * [drawDeep 画刻度]
+         * @param  {[object]} context [context]
+         */
+        function drawDeep(context) {
+            for (var j = 0; j < RADIUS; j += 10) {
+                context.beginPath();
+                context.lineWidth = .5;
+                context.strokeStyle = '#000';
+                context.arc(0, 0, j, 0, __.d2a(360));
+                context.stroke();
+                context.closePath();
+            }
+        }
+
+        /**
+         * [animate 动画]
+         */
+        function animate() {
+            __.clear(context);
+            context.save();
+            context.globalCompositeOperation = 'source-over';
+            context.translate(CX, CY);
+            context.rotate(__.d2a(i += 5));
+            drawBottom(context);
+            drawDeep(context);
+            context.drawImage(img, -CX, -CY);
+            context.restore();
+            requestAnimationFrame(animate);
+        }
+
+		var WIDTH = 200,
+			HEIGHT = 200,
+			CX = WIDTH / 2,
+			CY = WIDTH / 2,
+			RADIUS = 80,
+			i = 0,
+			img = new Image(),
+			context = __.createCanvas(),
+			radar_arc = __.$('radar_arc'),
+			radar_opacity = __.$('radar_opacity'),
+			radra_rotate = __.$('radra_rotate');
+
+
+		__.clear(context);
+		// 生成多个扇形
+		draw_radar_arc(context);
+
+		__.clear(context);
+		// 开始着色
+		draw_radar_opacity(context, 0, 360);
+		__.createCanvasImage(radar_opacity, context);
+		img.src = context.canvas.toDataURL();
+
+		__.clear(context);
+		animate();
+		radra_rotate.appendChild(context.canvas);
+
+
+	})();
+
+</script>

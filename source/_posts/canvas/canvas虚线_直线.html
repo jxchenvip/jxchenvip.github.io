@@ -93,7 +93,7 @@ context.getLineDash() // [5, 10];
 context.lineDashOffset++;
 ```
 
-<div id="line_dash_5"></div>
+<div id="line_dash_5" class="tc"></div>
 
 <h2>自定义虚线函数</h2>
 
@@ -132,73 +132,19 @@ context.lineDashOffset++;
 ```
 
 <div id="define_dash"></div>
-
+<style>
+	.tc{ text-align: center; }
+</style>
 <h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/dash_line/index.html">#下载源码</a></h2>
 
+<script src="/static/js/canvas/tool.js"></script>
 <script>
 
 	(function() {
 		
 		// 不支持canvas
-		if(!document.createElement('canvas').getContext) return false;
+		if(!__.canvas) return false;
 
-		/**
-		 * [createCanvas 创建canvas元素]
-		 * @return {[object]}
-		 */
-		function createCanvas() {
-			var canvas =  document.createElement('canvas');
-			var context = canvas.getContext('2d');
-			canvas.width = WIDTH;
-			canvas.height = HEIGHT;
-			return context;
-		}
-
-		/**
-		 * [$ 获取id]
-		 * @param  {[String]} id
-		 * @return {[object]} dom节点
-		 */
-		function $(id) {
-			return document.getElementById(id);
-		}
-
-		/**
-		 * [clear 清除画布]
-		 * @param  {[object]} context
-		 * @return {[void]}       
-		 */
-		function clear(context) {
-			context.clearRect(0, 0, WIDTH, HEIGHT);
-		}
-
-		/**
-		 * [createCanvasImage description]
-		 * @param  {[object]} ele     [dom节点]
-		 * @param  {[object]} context [画布]
-		 * @return {[void]}
-		 */
-		function createCanvasImage(ele, context) {
-			var img = ele.getElementsByTagName('img')[0],
-				src = context.canvas.toDataURL();
-			if(img) {
-				var a = ele.getElementsByTagName('a')[0];
-				a && (a.href = src);
-				img.src = src;
-			} else {
-				ele.innerHTML = "<img src="+src+" alt='' />";
-			}
-		}
-
-
-		/**
-		 * [d2a 角度转弧度]
-		 * @param  {[number]} n [角度]
-		 * @return {[number]}   [弧度]
-		 */
-		function d2a(n) {
-			return n * Math.PI / 180;
-		}
 
 		function draw_line_dash(context, arg, i) {
 			i = i || 0;
@@ -215,9 +161,9 @@ context.lineDashOffset++;
 		}
 
 		function exe_draw_line_dash(ele, arg, i) {
-			clear(context);
+			__.clear(context);
 			draw_line_dash(context, arg, i);
-			createCanvasImage(ele, context);
+			__.createCanvasImage(ele, context);
 		}
 
 		function getPoint() {
@@ -227,7 +173,7 @@ context.lineDashOffset++;
 				deg = 0,points = [];
 
 			for(var i = 0; i < WIDTH-iscale; i+=iscale) {
-				var a = d2a(deg+=90),
+				var a = __.d2a(deg+=90),
 					x = Math.cos(a) * i + lastX,
 					y = Math.sin(a) * i + lastY;
 				lastX = x;
@@ -254,19 +200,19 @@ context.lineDashOffset++;
 			HEIGHT = 200,
 			CX = WIDTH / 2,
 			CY = HEIGHT / 2,
-			context = createCanvas(),
-			line_dash_1 = $('line_dash_1'),
-			line_dash_2 = $('line_dash_2'),
-			line_dash_3 = $('line_dash_3'),
-			line_dash_4 = $('line_dash_4'),
-			line_dash_5 = $('line_dash_5'),
-			line_move_to = $('line_move_to'),
+			context = __.createCanvas(),
+			line_dash_1 = __.$('line_dash_1'),
+			line_dash_2 = __.$('line_dash_2'),
+			line_dash_3 = __.$('line_dash_3'),
+			line_dash_4 = __.$('line_dash_4'),
+			line_dash_5 = __.$('line_dash_5'),
+			line_move_to = __.$('line_move_to'),
 			j = 0,
 			points = getPoint();
 
-			clear(context);
+			__.clear(context);
 			base_draw_line();
-			createCanvasImage(line_move_to, context);
+			__.createCanvasImage(line_move_to, context);
 
 			exe_draw_line_dash(line_dash_1, [5]);
 			exe_draw_line_dash(line_dash_2, [5, 10]);
@@ -274,12 +220,12 @@ context.lineDashOffset++;
 			exe_draw_line_dash(line_dash_4, [5, 10, 15, 20]);
 
 			function next() {
-				clear(context);
+				__.clear(context);
 				base_draw_line(function(c) {
 					c.setLineDash([10, 2]);
 					c.lineDashOffset = j+=10;
 				});
-				setTimeout(next, 30);
+				requestAnimationFrame(next);
 			}
 			next();
 
@@ -328,13 +274,13 @@ context.lineDashOffset++;
 			    	this.drawDashedLine(ctx, {x: 0, y: H / 2}, {x: W, y: H / 2}, this.dashedLength);
 			    },
 			    init: function() {
-			    	this.ctx = createCanvas();
-			    	this.dom = $('define_dash');
+			    	this.ctx = __.createCanvas();
+			    	this.dom = __.$('define_dash');
 			    	this.W = WIDTH;
 			    	this.H = HEIGHT;
 			    	this.dashedLength = 5;
 			    	this.draw(this.ctx);
-			    	createCanvasImage(this.dom, this.ctx);
+			    	__.createCanvasImage(this.dom, this.ctx);
 
 			    }
 			}).init();
