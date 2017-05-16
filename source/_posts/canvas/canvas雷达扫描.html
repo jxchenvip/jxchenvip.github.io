@@ -9,7 +9,8 @@ date: 2017/5/15 15:53:10
 <h2>角度渐变</h2>
 
 <p>canvas绘制雷达扫描图像，首先想到的就是一个圆的半径在那里转圈，然后留下扫描过的痕迹。</p>
-<p>用过photoshop的人都会发现渐变工具栏除了，线性渐变、径向渐变、对称渐变，菱形渐变之外还有一种<strong>角度渐变</strong>, 如果我们的canvas也支持这种角度渐变，那么绘制雷达扫描图肯定就是一种很简单的事情，但事与愿违，目前canvas只支持线性渐变（createLinearGradient）与径向渐变（createRadialGradient）这两个方法的用法，以后我们再讨论，今天要做的就是模拟角度渐变，进而绘制出雷达扫描图。</p>
+<p>用过photoshop的人都会发现渐变工具栏除了，线性渐变、径向渐变、对称渐变，菱形渐变之外还有一种<strong>角度渐变</strong>。</p>
+<p> 如果我们的canvas也支持这种角度渐变，那么绘制雷达扫描图肯定就是一种很简单的事情，但事与愿违，目前canvas只支持线性渐变（createLinearGradient）与径向渐变（createRadialGradient）这两个方法的用法，以后我们再讨论，今天要做的就是模拟角度渐变，进而绘制出雷达扫描图。</p>
 
 
 <p>参照photoshop中角度渐变，首先要先画一个360°扇形也就圆，然后从扇形起始边开始渐变到结束边。</p>
@@ -27,11 +28,10 @@ date: 2017/5/15 15:53:10
 // eAngle	结束角，以弧度计。
 // counterclockwise	可选。规定应该逆时针还是顺时针绘图。
 // False = 顺时针，true = 逆时针。
-context.globalAlpha = number;
 context.arc(x,y,r,sAngle,eAngle,counterclockwise);
 ```
 
-<p>一圈有360°，那么我们就生成36个1°的扇形</p>
+<p>一圈有360°，那么我们就生成36个10°的扇形</p>
 
 <div id="radar_arc"></div>
 <br>
@@ -52,8 +52,9 @@ rgba(r, g, b, a);
 
 
 <div id="radar_opacity"></div>
-
-<p>我们到此就做好了，角度渐变，但是使用这种循环的方式，极其的消耗性能。我例子的做法是将征生成的角度渐变存为图片，然后在canvas上面渲染database64图片。这样只有一次循环生成角度渐变。</p>
+<br>
+<p>我们到此就做好了，角度渐变，但是使用这种循环的方式，极其的消耗性能。</p>
+<p>我例子的做法是将生成的角度渐变存为图片，然后在canvas上面渲染base64图片。这样只有一次循环生成角度渐变。</p>
 <p><strong>当然了你从一开始就可以使用图片。</strong></p>
 <p>在这里我们也选择使用图片，但这个图片是我们用js动态生成的。可以随意改其他大小，颜色，及角度等等属性，前提是你封装好这个函数。封装先放一边。我们继续下一步工作。</p>
 
@@ -63,7 +64,7 @@ rgba(r, g, b, a);
 <div id="radra_rotate"></div>
 
 
-<h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/radar1/index.html">#下载源码</a></h2>
+<h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/radar1/index.html">#查看demo源码</a></h2>
 <style>
 	#radra_rotate{ text-align: center; }
 </style>

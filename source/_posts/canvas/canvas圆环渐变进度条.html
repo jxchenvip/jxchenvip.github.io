@@ -1,0 +1,182 @@
+---
+title: canvas圆环渐变进度条
+categories: 前端
+tags: [javascript, html5, canvas]
+date: 2017/5/16 15:53:10 
+---
+
+
+<h2>进度条</h2>
+
+<p>现在网速越来越快，视觉效果也慢慢的炫酷起来，带来视觉冲击的同时，难免也会在前端技术上带来一些挑战。</p>
+<p>比如：进度条随着前端技术的更新也从之前的一大长条，慢慢变得有了圆角，进而又出现了圆形进度条，只是圆形有点单调，那么我们还是来点点缀吧，然后演变为圆环加渐变的进度条。</p>
+<p>并不是说这些改变，给我们带来了多大的麻烦，而是这才有机会让我们去探索，去更新我们的技能，去迎接更多的挑战。</p>
+
+<p>接上篇文章《canvas雷达扫描》所提到的角度渐变，我们做这个圆环渐变就会事半功倍：</p>
+
+<!-- more -->
+
+
+<h2>圆形</h2>
+
+```js
+// x	圆的中心的 x 坐标。
+// y	圆的中心的 y 坐标。
+// r	圆的半径。
+// sAngle	起始角，以弧度计。（弧的圆形的三点钟位置是 0 度）。
+// eAngle	结束角，以弧度计。
+// counterclockwise	可选。规定应该逆时针还是顺时针绘图。
+// False = 顺时针，true = 逆时针。
+context.arc(x,y,r,sAngle,eAngle,counterclockwise);
+```
+
+<p>用上面方法，先画一个圆环</p>
+
+<div id="progress_arc"></div>
+<br>
+<p>然后再配合上篇讲过的角度渐变做上层的进度条。</p>
+<h2>角度渐变</h2>
+
+<p>角度渐变我们用的上篇文章提到的方法</p>
+<div id="radar_opacity1"></div>
+<br>
+<p>下图是由上图通过设置globalCompositeOperation得到的</p>
+
+<div id="radar_opacity"></div>
+<p>context.globalCompositeOperation的使用方法及作用请自行搜索：</p>
+```js
+// source-over 默认。在目标图像上显示源图像。
+// source-atop 在目标图像顶部显示源图像。源图像位于目标图像之外的部分是不可见的。
+// source-in 在目标图像中显示源图像。只有目标图像内的源图像部分会显示，目标图像是透明的。
+// source-out 在目标图像之外显示源图像。只会显示目标图像之外源图像部分，目标图像是透明的。
+// destination-over 在源图像上方显示目标图像。
+// destination-atop 在源图像顶部显示目标图像。源图像之外的目标图像部分不会被显示。
+// destination-in 在源图像中显示目标图像。只有源图像内的目标图像部分会被显示，源图像是透明的。
+// destination-out 在源图像外显示目标图像。只有源图像外的目标图像部分会被显示，源图像是透明的。
+// lighter 显示源图像 + 目标图像。
+// copy	显示源图像。忽略目标图像。
+// xor 使用异或操作对源图像与目标图像进行组合。
+
+globalCompositeOperation = "source-over"; 
+globalCompositeOperation = "lighter"; 
+globalCompositeOperation = "destination-atop"; 
+```
+<br>
+
+<p>那么接下来不断设置arc的结束角度就行了</p>
+
+<h2>递增角度</h2>
+<p>本例子采用的是两个canvas所绘制的（canvas离屏）具体实现方法，查看下方源码。</p>
+
+<div id="radra_rotate"></div>
+
+
+<h2><a target="_black" href="https://github.com/jxchenvip/demo/blob/dev/project/canvas/progress_circle/index.html">#查看demo源码</a></h2>
+<style>
+	#radra_rotate{ text-align: center; }
+</style>
+
+<script src="/static/js/canvas/tool.js"></script>
+<script>
+	(function() {
+		
+		// 不支持canvas
+        if (!__.canvas) return false;
+
+        /**
+         * [draw_arc 圆环]
+         * @param  {[object]} context [context]
+         */
+        function draw_arc(context) {
+            context.save();
+            context.globalCompositeOperation = 'destination-atop';
+            context.beginPath();
+            context.lineWidth = LINEWIDTH;
+            context.strokeStyle = '#e1e1e1';
+            context.arc(CX, CY, RADIUS, __.d2a(0), __.d2a(360));
+            context.stroke();
+            context.closePath();
+            context.restore();
+        }
+
+        /**
+         * [draw_radar_opacity 开始着色]
+         * @param  {[object]} context [context]
+         */
+        function draw_radar_opacity(context, s, e) {
+            s = s || 0;
+            e = e || 360;
+            if (e > 360) e = 360;
+            var lastsAngle = 0,
+                copies = Math.max(Math.min(120, e / 2), 60);
+
+            context.save();
+            context.globalCompositeOperation = 'lighter'; // 显示源图像 + 目标图像。
+            for (var i = 1; i <= copies; i++) {
+                var eDeg = i * e / copies;
+                context.beginPath();
+                context.lineCap = 'round';
+                context.lineJoin = 'round';
+                context.moveTo(CX, CY);
+                context.fillStyle = 'rgba(255, 102, 0, ' + i / copies + ')';
+                context.arc(CX, CY, RADIUS + LINEWIDTH, __.d2a(lastsAngle + s), __.d2a(eDeg + s));
+                context.fill();
+                lastsAngle = eDeg;
+            }
+            context.restore();
+        }
+
+        /**
+         * [animate 动画]
+         */
+        function animate() {
+            // canvas_1的图像
+            __.clear(context);
+            draw_radar_opacity(context, 0, i++);
+            draw_arc(context)
+            if (i % 360 == 0) {
+                i = 0;
+            }
+
+            // canvas_2的图像
+            __.clear(context1);
+            __.createText(context, parseInt(i * 100 / 360) + '%', CX, CY);
+            context1.drawImage(context.canvas, 0, 0);
+            requestAnimationFrame(animate);
+        }
+
+        var WIDTH = 200,
+            HEIGHT = 200,
+            LINEWIDTH = 15,
+            CX = WIDTH / 2,
+            CY = WIDTH / 2,
+            RADIUS = 80,
+            i = 0,
+            context = __.createCanvas(),
+            context1 = __.createCanvas(),
+            progress_arc = __.$('progress_arc'),
+            radar_opacity = __.$('radar_opacity'),
+            radar_opacity1 = __.$('radar_opacity1'),
+            radra_rotate = __.$('radra_rotate');
+
+        // 圆环
+        draw_arc(context, 0, 360);
+        __.createCanvasImage(progress_arc, context);
+
+        // 角度渐变
+        __.clear(context);
+        draw_radar_opacity(context, 0, 360);
+        __.createCanvasImage(radar_opacity1, context);
+
+        // 渐变圆环
+        __.clear(context);
+        draw_radar_opacity(context, 0, 360);
+        draw_arc(context)
+        __.createCanvasImage(radar_opacity, context);
+
+        // 渐变进度条
+        animate();
+        radra_rotate.appendChild(context1.canvas);
+	})();
+
+</script>
