@@ -124,6 +124,24 @@ id sem consectetuer libero luctus adipiscing.
 
 任何体面的文本编辑器应该使电子邮件风格的报价很容易。例如，使用BBEdit，您可以进行选择，并从文本菜单中选择增加报价级别。
 
+### 表格
+
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+
+
+```
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+
+```
+
 ###  列表
 
 Markdown支持有序（编号）和无序（项目符号）列表。
