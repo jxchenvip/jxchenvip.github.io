@@ -106,3 +106,9 @@ image_minifier:
   optimizationLevel: 2
   pngquant: false
   progressive: false
+
+
+webpack:
+  entry:
+    - 'themes/next/source/js/app.js'
+    - 'themes/next/source/js/lib.js'

@@ -18,9 +18,10 @@
     "hexo-renderer-marked": "^0.2.10",
     "hexo-renderer-pug": "0.0.5",
     "hexo-renderer-stylus": "^0.3.1",
+    "hexo-renderer-webpack": "^0.4.0",
     "hexo-server": "^0.2.0",
     "hexo-toc": "^1.0.8",
     "install": "^0.8.9",
-    "npm": "^4.5.0"
+    "npm": "^4.6.1"
   }
 }

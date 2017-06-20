@@ -6,20 +6,29 @@ categories: 前端
 date: 2017-04-19 11:38:47
 ---
 
-
-#### 把这个目录变成Git可以管理的仓库
+####  初始化git项目
 
 ``` bash
 $ git init 
 ```
+
+####  添加文件
+
+``` bash
+$ git add . 
+```
+
 ####  提交代码
  
 ``` bash
-$ git commit -m 
+$ git commit -m  "描述信息"
 ```
 
-<!--more-->
-
+####  添加并提交
+ 
+``` bash
+$ git commit -am "描述信息"
+```
 
 #### 查看工作区的状态
 
@@ -49,36 +58,43 @@ $ git log --stat 详情信息
 ``` bash
 $ git reset --hard HEAD^ 
 ```
-#### 查看文件内容
+
+#### 恢复至远程分支
 
 ``` bash
-$ cat xxx.js 
+$ git reset --hard origin <branch>
 ```
+
+#### 丢弃所有修改文件
+
+``` bash
+$ git checkout .
+```
+
 #### 查看命令历史，以便确定要回到未来的哪个版本。
 
 ``` bash
 $ git reflog  
 ```
+
 #### 与上一版本比较
 
 ``` bash
 $ git diff HEAD~1 
 ```
-#### 当你改乱了工作区某个文件的内容，想直接丢弃工作区的修改时，用命令
 
-``` bash
-$ git checkout -- file  
-```
 #### 恢复文件
 
 ``` bash
 $ git checkout -- xxx.js 
 ```
-#### 删除文件 	
+
+#### 删除文件   
 
 ``` bash
 $ git rm xxx.js 
 ```
+
 #### 查看分支
 
 ``` bash
@@ -89,25 +105,36 @@ $ git branch
 ```
 $ git branch <name> 
 ```
+
 #### 切换分支
 
 ``` bash
 $ git checkout <name> 
 ```
+
 #### 创建+切换分支
 
 ``` bash
 $ git checkout -b <name> 
 ```
-#### 合并到某分支到当前分支	
+
+#### 查看远程仓库地址
+
+``` bash
+$ git remote -V 
+```
+
+#### 合并到某分支到当前分支    
 
 ``` bash
 $ git merge <name> 
 ```
+
 #### 删除分支
 
 ``` bash
 $ git branch -d <name>  
+$ git push origin <name>: 
 ```
 
 #### 看到分支合并图
