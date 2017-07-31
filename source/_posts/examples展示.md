@@ -68,8 +68,7 @@ date: 2017-07-16 12:35:25
             "visitTime": 1499950635000,
             "changeTime": 1499950635000,
             "category": "Canvas"
-        },
-	// ...
+        }
     ],
     "total": 26,
     "category": {
