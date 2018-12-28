@@ -5,8 +5,18 @@ categories: 前端
 
 date: 2017/5/4 10:30:20 
 ---
+## 获取深层属性值
+
+```js
+const deepAttr = { a: { b: { c: 15 } } };
+const pluckDeep = path => obj =>
+  path.split(".").reduce((val, attr) => val[attr], obj);
+
+pluckDeep("a.b.c")(deepAttr);
+```
 
 ## 图片加载
+
 
 ```js
 function ImgLoader(property) {
