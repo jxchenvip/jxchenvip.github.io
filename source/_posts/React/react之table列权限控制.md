@@ -1,5 +1,5 @@
 ---
-title: React之table列的权限控制
+title: React之table列の权限控制
 tags: [前端,javascript,react,antd]
 categories: 前端
 date: 2017-08-12 11:38:47
